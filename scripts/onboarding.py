@@ -13,20 +13,33 @@ DOMAIN        = "brsankaraoutlook.onmicrosoft.com"
 async def onboard_user(client, row):
     upn = f"{row['first_name'].lower()}.{row['last_name'].lower()}@{DOMAIN}"
     print(f"🔄 Création de : {upn}")
-    user = User(
-        display_name=f"{row['first_name']} {row['last_name']}",
-        user_principal_name=upn,
-        mail_nickname=f"{row['first_name'].lower()}.{row['last_name'].lower()}",
-        department=row['department'],
-        job_title=row['job_title'],
-        account_enabled=True,
-        password_profile=PasswordProfile(
-            password="TempPass123!",
-            force_change_password_next_sign_in=True
+    
+    # Vérifie si l'utilisateur existe déjà
+    try:
+        existing = await client.users.by_user_id(upn).get()
+        if existing:
+            print(f"⚠️ Utilisateur déjà existant, skip : {upn}")
+            return
+    except Exception:
+        pass  # L'utilisateur n'existe pas, on continue
+
+    try:
+        user = User(
+            display_name=f"{row['first_name']} {row['last_name']}",
+            user_principal_name=upn,
+            mail_nickname=f"{row['first_name'].lower()}.{row['last_name'].lower()}",
+            department=row['department'],
+            job_title=row['job_title'],
+            account_enabled=True,
+            password_profile=PasswordProfile(
+                password="TempPass123!",
+                force_change_password_next_sign_in=True
+            )
         )
-    )
-    await client.users.post(user)
-    print(f"✅ Utilisateur créé : {upn}")
+        await client.users.post(user)
+        print(f"✅ Utilisateur créé : {upn}")
+    except Exception as e:
+        print(f"❌ Erreur lors de la création de {upn} : {e}")
 
 async def offboard_user(client, row):
     upn = f"{row['first_name']}@{DOMAIN}"
