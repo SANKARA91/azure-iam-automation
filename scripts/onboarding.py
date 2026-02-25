@@ -12,7 +12,7 @@ DOMAIN        = "brsankaraoutlook.onmicrosoft.com"
 
 async def onboard_user(client, row):
     upn = f"{row['first_name'].lower()}.{row['last_name'].lower()}@{DOMAIN}"
-    print(f"🔄 Création de : {upn}")
+    print(f"🔄 Vérification de : {upn}")
     
     # Vérifie si l'utilisateur existe déjà
     try:
@@ -21,9 +21,8 @@ async def onboard_user(client, row):
             print(f"⚠️ Utilisateur déjà existant, skip : {upn}")
             return
     except Exception:
-        pass  # L'utilisateur n'existe pas, on continue
-
-    try:
+        # L'utilisateur n'existe pas, on le crée
+        print(f"🔄 Création de : {upn}")
         user = User(
             display_name=f"{row['first_name']} {row['last_name']}",
             user_principal_name=upn,
@@ -38,8 +37,6 @@ async def onboard_user(client, row):
         )
         await client.users.post(user)
         print(f"✅ Utilisateur créé : {upn}")
-    except Exception as e:
-        print(f"❌ Erreur lors de la création de {upn} : {e}")
 
 async def offboard_user(client, row):
     upn = f"{row['first_name']}@{DOMAIN}"
