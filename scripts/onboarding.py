@@ -13,15 +13,12 @@ DOMAIN        = "brsankaraoutlook.onmicrosoft.com"
 async def onboard_user(client, row):
     upn = f"{row['first_name'].lower()}.{row['last_name'].lower()}@{DOMAIN}"
     print(f"🔄 Vérification de : {upn}")
-    
-    # Vérifie si l'utilisateur existe déjà
     try:
         existing = await client.users.by_user_id(upn).get()
         if existing:
             print(f"⚠️ Utilisateur déjà existant, skip : {upn}")
             return
     except Exception:
-        # L'utilisateur n'existe pas, on le crée
         print(f"🔄 Création de : {upn}")
         user = User(
             display_name=f"{row['first_name']} {row['last_name']}",
