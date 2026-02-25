@@ -2,3 +2,4 @@ action,first_name,last_name,department,job_title
 onboard,Alice,Dupont,dev,Developer
 onboard,Bob,Martin,finance,Analyst
 offboard,john.doe,,,
+onboard,Charlie,Durand,it,SysAdmin
