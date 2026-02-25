@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'data/users.csv'
+  workflow_dispatch:
 
 jobs:
   run-iam-script:
